@@ -16,8 +16,7 @@ public_users.post("/register", (req, res) => {
   }
 
   // 2. Kiểm tra username đã tồn tại
-  const userExists = users.some(users => users.username === username);
-  if (userExists) {
+  if (!isValid) {
     return res.status(409).json({
       message: "Username already exists"
     });
@@ -50,23 +49,23 @@ public_users.get('/isbn/:isbn',function (req, res) {
  });
   
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  //Write your code here
+public_users.get('/author/:author', (req, res) => {
   const author = req.params.author;
-// Duyệt object và lọc sách theo tác giả
-  const result = [];
-  for (const key in books) {
-    if (books[key].author === author) {
-        result.push(books[key]);
+  let result = [];
+
+  for (let isbn in books) {
+    if (books[isbn].author === author) {
+      result.push({
+        isbn: isbn,
+        author: books[isbn].author,
+        title: books[isbn].title,
+        reviews: books[isbn].reviews
+      });
     }
   }
-  if (result.length > 0) {
-      res.status(200).json(result);
-  } else {
-      res.status(404).json({ message: "Author not found" });
-  }
-  });
 
+  res.json(result);
+});
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
   //Write your code here
